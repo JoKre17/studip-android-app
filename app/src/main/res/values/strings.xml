@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">StudIP</string>
+
+    <!-- STUDIP CLIENT -->
+    <string name="studip_uri_key">STUDIP_URI</string>
+    <string name="studip_username_key">STUDIP_USERNAME</string>
+    <string name="studip_password_key">STUDIP_PASSWORD</string>
+
+    <string name="login_select_server_hint">Select your server</string>
+    <string name="login_username_hint">Username</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_login_button">Login</string>
+
+    <string-array name="studip_server_array">
+        <item>Hannover</item>
+        <item>Braunschweig</item>
+    </string-array>
+
 </resources>
