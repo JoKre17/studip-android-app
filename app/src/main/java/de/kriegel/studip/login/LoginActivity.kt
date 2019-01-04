@@ -16,12 +16,17 @@ import de.kriegel.studip.main.MainActivity
 import kotlinx.android.synthetic.main.activity_login.*
 import timber.log.Timber
 import java.net.URI
+import java.util.*
+import java.util.function.Predicate
 
 class LoginActivity : AppCompatActivity() {
 
     lateinit var client: StudIPClient
 
     val SHARED_PREFERENCES_FILE: String = "de.kriegel.studip.prefs"
+    lateinit var serverService: ServerService
+
+    val NO_AUTO_LOGIN = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,19 +36,13 @@ class LoginActivity : AppCompatActivity() {
             Timber.plant(Timber.DebugTree())
         }
 
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter.createFromResource(
-            this,
-            R.array.studip_server_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
-            serverSpinner.adapter = adapter
-        }
+        serverService = ServerService(baseContext)
+        var allServers = serverService.allServers
 
-        // read from shared preferences
+        var serverPairSpinnerAdapter = ServerPairSpinnerAdapter(baseContext, allServers)
+
+        serverSpinner.adapter = serverPairSpinnerAdapter
+
         val prefs = this.getPreferences(Context.MODE_PRIVATE)
         Timber.i("All shared preferences:")
         prefs.all.entries.forEach {
@@ -60,10 +59,20 @@ class LoginActivity : AppCompatActivity() {
         Timber.i("Server: ${serverUri.toString()}")
         Timber.i("User  : ${serverCredentials.username} ${serverCredentials.password}")
 
+        var optional = allServers.stream().filter(Predicate {
+            it.serverPair.second.toString().equals(
+                serverUri.toString()
+            )
+        }).findAny()
+
+        if (optional.isPresent) {
+            serverSpinner.setSelection(allServers.indexOf(optional.get()))
+        }
+
         usernameEditText.setText(serverCredentials.username)
         passwordEditText.setText(serverCredentials.password)
 
-        if (!serverUri.toString().isEmpty() && !serverCredentials.username.isEmpty() && !serverCredentials.password.isEmpty()) {
+        if (!NO_AUTO_LOGIN && !serverUri.toString().isEmpty() && !serverCredentials.username.isEmpty() && !serverCredentials.password.isEmpty()) {
             Timber.i("Logging in from shared preferences")
             performLogin()
         }
@@ -77,14 +86,19 @@ class LoginActivity : AppCompatActivity() {
     fun performLogin() {
         Timber.i("Performing login")
 
-        Timber.i("UI: Server: ${serverSpinner.selectedItem.toString()}")
+        var serverUri: URI? = null
+
+        if (serverSpinner.selectedItem is CustomServerPairWrapper) {
+            serverUri = (serverSpinner.selectedItem as CustomServerPairWrapper).serverPair.second
+        }
+
+        Timber.i("UI: Server: ${serverSpinner.selectedItem} $serverUri")
         Timber.i("UI: User: ${usernameEditText.text} ${passwordEditText.text}")
 
-        if (serverSpinner.selectedItem == null || usernameEditText.text.isEmpty() || passwordEditText.text.isEmpty()) {
+        if (serverUri == null || usernameEditText.text.isEmpty() || passwordEditText.text.isEmpty()) {
             Toast.makeText(this, "Missing data", LENGTH_SHORT).show()
         } else {
 
-            var serverUri = URI("https://studip.uni-hannover.de")
             var serverCredentials = Credentials(usernameEditText.text.toString(), passwordEditText.text.toString())
 
             client = StudIPClient(serverUri, serverCredentials)
