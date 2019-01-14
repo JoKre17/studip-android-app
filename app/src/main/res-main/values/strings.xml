@@ -2,6 +2,7 @@
 
     <string name="notifications">Notifications</string>
     <string name="courses">Courses</string>
+    <string name="app_close_warning">Click again to close the app</string>
 
     // DRAWER MENU
     <string name="drawer_menu_option_courses">Courses</string>

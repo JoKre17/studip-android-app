@@ -17,6 +17,8 @@ import de.kriegel.studip.main.config.ConfigFragment
 import de.kriegel.studip.main.course.CourseFragment
 import timber.log.Timber
 import java.net.URI
+import android.widget.Toast
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,10 +29,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var mDrawerLayout: DrawerLayout
+    private var appCloseWarningOccurance: Date? = null
+    lateinit private var appCloseWarningToast: Toast
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        appCloseWarningToast = Toast.makeText(this, R.string.app_close_warning, Toast.LENGTH_SHORT)
 
         initClient()
 
@@ -57,9 +63,9 @@ class MainActivity : AppCompatActivity() {
 
             Timber.i("Clicked $menuItem")
 
-            var fragment : Fragment? = null
+            var fragment: Fragment? = null
 
-            when(menuItem.itemId) {
+            when (menuItem.itemId) {
                 R.id.nav_courses -> fragment = CourseFragment()
                 R.id.nav_settings -> fragment = ConfigFragment()
                 R.id.nav_about -> fragment = AboutFragment()
@@ -84,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        client?.shutdown()
+        client.shutdown()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -112,6 +118,19 @@ class MainActivity : AppCompatActivity() {
         client = StudIPClient(serverUri, serverCredentials)
     }
 
+    override fun onBackPressed() {
 
+        // if back was pressed once while the viewPager is on page 0
+        if (appCloseWarningOccurance != null) {
+            // if the last time the warning was shown was less than 2 seconds ago
+            if (Date().getTime() - appCloseWarningOccurance!!.getTime() < 2000) {
+                appCloseWarningToast.cancel()
+                super.onBackPressed()
+            }
+        }
+
+        appCloseWarningOccurance = Date()
+        appCloseWarningToast!!.show()
+    }
 
 }
