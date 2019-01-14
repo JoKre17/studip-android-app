@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">StudIP</string>
+
+    <string name="studip_uri_key">STUDIP_URI</string>
+    <string name="studip_username_key">STUDIP_USERNAME</string>
+    <string name="studip_password_key">STUDIP_PASSWORD</string>
+
+    <!-- NOTIFICATION -->
+    <string name="notification_studip_course_news_channel_name">de.kriegel.studip.notifications-channel_course-news</string>
+    <string name="notification_studip_course_news_channel_description">Notification Channel for the StudIP Application to notify about course news</string>
+    <string name="notification_studip_course_news_logs_file_name">courseNewsIds.log</string>
+
+</resources>

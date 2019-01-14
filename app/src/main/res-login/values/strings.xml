@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="login_select_server_hint">Select your server</string>
+    <string name="login_username_hint">Username</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_login_button">Login</string>
+
+</resources>

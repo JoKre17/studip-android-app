@@ -1,0 +1,27 @@
+<resources>
+
+    <string name="notifications">Notifications</string>
+    <string name="courses">Courses</string>
+
+    // DRAWER MENU
+    <string name="drawer_menu_option_courses">Courses</string>
+    <string name="drawer_menu_option_settings">Settings</string>
+    <string name="drawer_menu_option_about">About</string>
+
+    // LANDING PAGE
+
+    // COURSES
+
+    // SETTINGS
+    <string name="settings_notifications_course_announcements">Course announcements</string>
+
+    // ABOUT
+    <string name="about_info">This app is designed and created by Josef Kriegel, computer sience student of the Lebniz University Hanover. Any used image resources and colors are owned by registered association Stud.IP.</string>
+    <string name="about_contact">Feel free to contact me in case of questions, bug reports, feature requests, etc. .</string>
+    <string name="about_contact_details">Josef Kriegel\njosef.kriegel@web.de</string>
+
+
+    // STARTUP
+    <string name="welcome">Welcome!</string>
+
+</resources>

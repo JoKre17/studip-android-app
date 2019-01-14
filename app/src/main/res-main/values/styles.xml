@@ -1,0 +1,10 @@
+<resources>
+
+    <!-- ToolBar -->
+    <style name="AppTheme.ToolBar" parent="AppTheme">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
+    </style>
+
+</resources>
