@@ -13,6 +13,9 @@ import timber.log.Timber
 
 class ConfigFragment : Fragment() {
 
+    companion object {
+        fun newInstance(args: Bundle?) = ConfigFragment().apply { arguments = args }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.settings_fragment, container, false)

@@ -18,7 +18,10 @@ import de.kriegel.studip.main.course.CourseFragment
 import timber.log.Timber
 import java.net.URI
 import android.widget.Toast
+import de.kriegel.studip.client.content.model.data.Course
+import de.kriegel.studip.client.content.model.data.Semester
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,6 +30,10 @@ class MainActivity : AppCompatActivity() {
         lateinit var client: StudIPClient
         lateinit var appConfiguration: AppConfiguration
     }
+
+    private var courseFragment: CourseFragment? = null
+    private var configFragment: ConfigFragment? = null
+    private var aboutFragment: AboutFragment? = null
 
     private lateinit var mDrawerLayout: DrawerLayout
     private var appCloseWarningOccurance: Date? = null
@@ -66,9 +73,29 @@ class MainActivity : AppCompatActivity() {
             var fragment: Fragment? = null
 
             when (menuItem.itemId) {
-                R.id.nav_courses -> fragment = CourseFragment()
-                R.id.nav_settings -> fragment = ConfigFragment()
-                R.id.nav_about -> fragment = AboutFragment()
+                R.id.nav_courses -> {
+                    when (courseFragment) {
+                        null -> {
+                            val currentSemester = client.courseService.currentSemester
+                            val currentCourses = client.courseService.getCoursesForSemesterId(currentSemester.id)
+
+                            courseFragment = CourseFragment.newInstance(Bundle(), currentCourses)
+                        }
+                    }
+                    fragment = courseFragment
+                }
+                R.id.nav_settings -> {
+                    when (configFragment) {
+                        null -> configFragment = ConfigFragment.newInstance(Bundle())
+                    }
+                    fragment = configFragment
+                }
+                R.id.nav_about -> {
+                    when (aboutFragment) {
+                        null -> aboutFragment = AboutFragment.newInstance(Bundle())
+                    }
+                    fragment = aboutFragment
+                }
             }
 
             //replacing the fragment
@@ -116,6 +143,21 @@ class MainActivity : AppCompatActivity() {
         Timber.i("User  : $serverCredentials")
 
         client = StudIPClient(serverUri, serverCredentials)
+
+        Thread {
+            var isAuthenticated = false
+            var counter = 0
+            while (!isAuthenticated) {
+                if (counter >= 10) {
+                    Timber.w("Could not authenticate in 10 tries")
+                }
+
+                isAuthenticated = client.authService.authenticate()
+
+                Thread.sleep(150)
+                counter++
+            }
+        }.start()
     }
 
     override fun onBackPressed() {

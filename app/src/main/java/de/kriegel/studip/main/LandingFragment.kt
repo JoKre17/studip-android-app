@@ -9,6 +9,10 @@ import de.kriegel.studip.R
 
 class LandingFragment : Fragment() {
 
+    companion object {
+        fun newInstance(args: Bundle) = LandingFragment().apply { arguments = args }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.landing_fragment, container, false)
     }
