@@ -12,6 +12,11 @@
     // LANDING PAGE
 
     // COURSES
+    <string name="course_details">Details</string>
+    <string name="course_forum">Forum</string>
+    <string name="course_participants">Participants</string>
+    <string name="course_files">Files</string>
+    <string name="course_announcements">Announcements</string>
 
     // SETTINGS
     <string name="settings_notifications_course_announcements">Course announcements</string>

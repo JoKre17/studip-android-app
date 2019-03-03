@@ -14,32 +14,40 @@ import de.kriegel.studip.client.auth.Credentials
 import de.kriegel.studip.client.service.StudIPClient
 import de.kriegel.studip.config.AppConfiguration
 import de.kriegel.studip.main.config.ConfigFragment
-import de.kriegel.studip.main.course.CourseFragment
+import de.kriegel.studip.main.course.CourseListFragment
 import timber.log.Timber
 import java.net.URI
 import android.widget.Toast
 import de.kriegel.studip.client.content.model.data.Course
+import de.kriegel.studip.client.content.model.data.Id
 import de.kriegel.studip.client.content.model.data.Semester
+import kotlinx.coroutines.*
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CoroutineScope {
 
     companion object {
-        lateinit var client: StudIPClient
         lateinit var appConfiguration: AppConfiguration
     }
 
-    private var courseFragment: CourseFragment? = null
-    private var configFragment: ConfigFragment? = null
-    private var aboutFragment: AboutFragment? = null
+    override val coroutineContext = Dispatchers.Main + SupervisorJob()
+
+    var courseFragment: CourseListFragment? = null
+    var configFragment: ConfigFragment? = null
+    var aboutFragment: AboutFragment? = null
 
     private lateinit var mDrawerLayout: DrawerLayout
     private var appCloseWarningOccurance: Date? = null
-    lateinit private var appCloseWarningToast: Toast
+    lateinit private var appCloseWarningToast : Toast
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        if(savedInstanceState != null) {
+            loadFromBundle(savedInstanceState)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -75,12 +83,7 @@ class MainActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.nav_courses -> {
                     when (courseFragment) {
-                        null -> {
-                            val currentSemester = client.courseService.currentSemester
-                            val currentCourses = client.courseService.getCoursesForSemesterId(currentSemester.id)
-
-                            courseFragment = CourseFragment.newInstance(Bundle(), currentCourses)
-                        }
+                        null -> courseFragment = CourseListFragment.newInstance(Bundle())
                     }
                     fragment = courseFragment
                 }
@@ -116,8 +119,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        Timber.i("MainActivity - onDestroy")
+
         super.onDestroy()
-        client.shutdown()
+        coroutineContext[Job]!!.cancel()
+        appConfiguration.client?.shutdown()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -142,22 +148,24 @@ class MainActivity : AppCompatActivity() {
         Timber.i("Server: ${serverUri.path}")
         Timber.i("User  : $serverCredentials")
 
-        client = StudIPClient(serverUri, serverCredentials)
+        var isAuthenticated = appConfiguration.performLogin(serverUri, serverCredentials)
 
-        Thread {
-            var isAuthenticated = false
-            var counter = 0
-            while (!isAuthenticated) {
-                if (counter >= 10) {
-                    Timber.w("Could not authenticate in 10 tries")
+        if(!isAuthenticated) {
+            Thread {
+                var counter = 0
+                while (!isAuthenticated) {
+                    if (counter >= 9) {
+                        Timber.w("Could not authenticate in 10 tries")
+                    }
+
+                    isAuthenticated = appConfiguration.performLogin(serverUri, serverCredentials)
+
+                    Thread.sleep(150)
+                    counter++
                 }
+            }.start()
+        }
 
-                isAuthenticated = client.authService.authenticate()
-
-                Thread.sleep(150)
-                counter++
-            }
-        }.start()
     }
 
     override fun onBackPressed() {
@@ -173,6 +181,12 @@ class MainActivity : AppCompatActivity() {
 
         appCloseWarningOccurance = Date()
         appCloseWarningToast!!.show()
+    }
+
+    private fun loadFromBundle(bundle: Bundle) {
+        Timber.d("loadFromBundle")
+
+        initClient()
     }
 
 }

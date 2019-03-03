@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import de.kriegel.studip.R
-import de.kriegel.studip.main.course.CourseFragment
 
 class AboutFragment : Fragment() {
 

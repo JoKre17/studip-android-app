@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-              android:layout_height="wrap_content" android:orientation="horizontal">
+              android:layout_height="wrap_content" android:orientation="horizontal"
+              android:paddingTop="4dp" android:paddingBottom="4dp">
 
-    <View android:id="@+id/rectangle_at_the_top"
+    <View android:id="@+id/courseColorIndicator"
           android:layout_width="24dp"
           android:layout_height="match_parent"
           android:background="#DDDDDD"
@@ -14,28 +15,38 @@
             android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="8dp">
         <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/textView" tools:text="Lineare Algebra"/>
+                android:layout_height="wrap_content" android:id="@+id/courseTitle" tools:text="Lineare Algebra"
+                android:layout_marginBottom="10dp" android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
         <LinearLayout
                 android:orientation="horizontal"
-                android:layout_height="wrap_content" android:layout_width="match_parent" android:gravity="right"
-        >
+                android:layout_height="wrap_content" android:layout_width="match_parent"
+                android:gravity="end" android:paddingEnd="8dp">
             <Button
-                    android:layout_width="30dp"
-                    android:id="@+id/forumButton"
-                    android:background="@drawable/ic_info" android:layout_height="30dp"
-            />
+                    android:layout_width="25dp"
+                    android:id="@+id/detailsButton"
+                    android:background="@drawable/ic_info" android:layout_height="25dp"
+                    style="?android:attr/buttonBarStyle"
+                    android:backgroundTint="@android:color/darker_gray" android:layout_marginStart="16dp"/>
             <Button
-                    android:text="Button"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp" android:id="@+id/button3" android:layout_weight="1"/>
+                    android:layout_width="25dp"
+                    android:layout_height="25dp" android:id="@+id/forumButton"
+                    android:background="@drawable/ic_forum" style="?android:attr/buttonBarStyle"
+                    android:backgroundTint="@android:color/darker_gray" android:layout_marginStart="16dp"/>
             <Button
-                    android:text="Button"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp" android:id="@+id/button2" android:layout_weight="1"/>
+                    android:layout_width="25dp"
+                    android:layout_height="25dp" android:id="@+id/participantsButton"
+                    android:background="@drawable/ic_persons" style="?android:attr/buttonBarStyle"
+                    android:backgroundTint="@android:color/darker_gray" android:layout_marginStart="16dp"/>
             <Button
-                    android:text="Button"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp" android:id="@+id/button" android:layout_weight="1"/>
+                    android:layout_width="25dp"
+                    android:layout_height="25dp" android:id="@+id/filesButton"
+                    android:background="@drawable/ic_files" style="?android:attr/buttonBarStyle"
+                    android:backgroundTint="@android:color/darker_gray" android:layout_marginStart="16dp"/>
+            <Button
+                    android:layout_width="25dp"
+                    android:layout_height="25dp" android:id="@+id/announcementsButton"
+                    android:background="@drawable/ic_news" style="?android:attr/buttonBarStyle"
+                    android:backgroundTint="@android:color/darker_gray" android:layout_marginStart="16dp"/>
         </LinearLayout>
     </LinearLayout>
 

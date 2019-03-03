@@ -17,14 +17,22 @@ class AppConfiguration(val context: Context) {
     private val LOGS_DIR_NAME = "logs"
     private val DOWNLOAD_DIR_NAME = "downloads"
 
+    lateinit var client : StudIPClient
+
     private var isDownloadEnabled = false
     private var isNotificationEnabled = false
 
-    var courseNewsJobScheduler: CourseNewsJobScheduler
+    private var courseNewsJobScheduler: CourseNewsJobScheduler
 
     init {
         courseNewsJobScheduler = CourseNewsJobScheduler()
     }
+
+    /*
+    fun setClient(client: StudIPClient) {
+        this.client = client
+    }
+    */
 
     fun logAllSharedPreferences() {
         val prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
@@ -120,7 +128,8 @@ class AppConfiguration(val context: Context) {
     }
 
     fun performLogin(serverUri: URI, serverCredentials: Credentials): Boolean {
-        val client = StudIPClient(serverUri, serverCredentials)
+        client = StudIPClient(serverUri, serverCredentials)
+        client.courseService.downloadManager.downloadDirectory = getDefaultDownloadLocation()
 
         Timber.i("Authenticating...")
         var isAuthenticated = false
@@ -137,10 +146,6 @@ class AppConfiguration(val context: Context) {
         Timber.i("Is authenticated? $isAuthenticated")
 
         if (isAuthenticated) {
-            Timber.d("Start main activity")
-
-            client.shutdown()
-
             // store to shared preferences
             val prefs = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE)
             with(prefs.edit()) {
@@ -150,10 +155,9 @@ class AppConfiguration(val context: Context) {
 
                 commit()
             }
-
         }
 
-        return isAuthenticated;
+        return isAuthenticated
     }
 
 }
