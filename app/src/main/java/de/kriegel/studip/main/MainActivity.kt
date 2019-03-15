@@ -160,7 +160,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
                     isAuthenticated = appConfiguration.performLogin(serverUri, serverCredentials)
 
-                    Thread.sleep(150)
+                    Thread.sleep(500)
                     counter++
                 }
             }.start()

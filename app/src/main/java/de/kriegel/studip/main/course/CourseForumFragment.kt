@@ -15,8 +15,6 @@ class CourseForumFragment() : Fragment() {
         fun newInstance(args: Bundle, course: Course) = CourseForumFragment().apply {
             arguments = args
             this.course = course
-
-            Timber.i(course.toString())
         }
     }
 

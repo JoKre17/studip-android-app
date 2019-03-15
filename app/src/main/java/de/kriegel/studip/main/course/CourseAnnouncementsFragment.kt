@@ -15,8 +15,6 @@ class CourseAnnouncementsFragment() : Fragment() {
         fun newInstance(args: Bundle, course: Course) = CourseAnnouncementsFragment().apply {
             arguments = args
             this.course = course
-
-            Timber.i(course.toString())
         }
     }
 

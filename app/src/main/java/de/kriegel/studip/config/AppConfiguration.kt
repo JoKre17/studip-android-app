@@ -140,7 +140,7 @@ class AppConfiguration(val context: Context) {
                 return@repeat
             } else {
                 Timber.w("Login failed (${it}. Try)")
-                Thread.sleep(150)
+                Thread.sleep(500)
             }
         }
         Timber.i("Is authenticated? $isAuthenticated")

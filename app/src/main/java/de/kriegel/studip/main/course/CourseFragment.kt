@@ -23,14 +23,17 @@ import kotlin.coroutines.coroutineContext
 class CourseFragment() : Fragment() {
 
     companion object {
-        fun newInstance(args: Bundle, course: Course) = CourseFragment().apply {
+        fun newInstance(args: Bundle, course: Course, initialShownTabIndex : Int) = CourseFragment().apply {
             arguments = args
             this.course = course
+            this.initialShownTabIndex = initialShownTabIndex
         }
     }
 
+
     private lateinit var pagerAdapter: PagerAdapter
     private lateinit var course: Course
+    private var initialShownTabIndex : Int = 0
 
     private lateinit var viewPager: ViewPager
 
@@ -56,6 +59,7 @@ class CourseFragment() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        tabLayout.getTabAt(initialShownTabIndex)?.select()
 
     }
 
@@ -83,25 +87,15 @@ class CourseFragment() : Fragment() {
         }
     }
 
-    class PagerAdapter(res: Resources, fm: FragmentManager, course: Course) : FragmentStatePagerAdapter(fm) {
+    class PagerAdapter(res: Resources, fm : FragmentManager, val course: Course) : FragmentStatePagerAdapter(fm) {
 
-        private val fragments: List<Fragment>
         private val tabTitles: List<String>
 
-        init {
-            val courseDetailsFragment = CourseDetailsFragment.newInstance(args = Bundle(), course = course)
-            val courseForumFragment = CourseForumFragment.newInstance(args = Bundle(), course = course)
-            val courseParticipantsFragment = CourseParticipantsFragment.newInstance(args = Bundle(), course = course)
-            val courseFilesFragment = CourseFilesFragment.newInstance(args = Bundle(), course = course)
-            val courseAnnouncementsFragment = CourseAnnouncementsFragment.newInstance(args = Bundle(), course = course)
+        private val fragmentsMap = HashMap<String, Fragment>()
 
-            fragments = listOf(
-                courseDetailsFragment,
-                courseForumFragment,
-                courseParticipantsFragment,
-                courseFilesFragment,
-                courseAnnouncementsFragment
-            )
+        init {
+
+            Timber.i("Initiating PagerAdapter")
 
             tabTitles = listOf(
                 res.getString(R.string.course_details),
@@ -110,11 +104,28 @@ class CourseFragment() : Fragment() {
                 res.getString(R.string.course_files),
                 res.getString(R.string.course_announcements)
             )
+
+            Timber.i("tabTitles: ${tabTitles.toString()}")
         }
 
-        override fun getCount(): Int = fragments.size
+        override fun getCount(): Int = tabTitles.size
 
-        override fun getItem(i: Int): Fragment = fragments.get(i)
+        override fun getItem(i: Int): Fragment {
+
+            if(!fragmentsMap.containsKey(tabTitles.get(i))) {
+
+                // The fragments are created if they are needed. The PagerAdapter calls also neighbour fragments of the tab layout via getItem when one is displayed
+                when(tabTitles.get(i)) {
+                    tabTitles.get(0) -> fragmentsMap.put(tabTitles.get(i), CourseDetailsFragment.newInstance(args = Bundle(), course = course))
+                    tabTitles.get(1) -> fragmentsMap.put(tabTitles.get(i), CourseForumFragment.newInstance(args = Bundle(), course = course))
+                    tabTitles.get(2) -> fragmentsMap.put(tabTitles.get(i), CourseParticipantsFragment.newInstance(args = Bundle(), course = course))
+                    tabTitles.get(3) -> fragmentsMap.put(tabTitles.get(i), CourseFilesFragment.newInstance(args = Bundle(), course = course))
+                    tabTitles.get(4) -> fragmentsMap.put(tabTitles.get(i), CourseAnnouncementsFragment.newInstance(args = Bundle(), course = course))
+                }
+            }
+
+            return fragmentsMap.get(tabTitles.get(i))!!
+        }
 
         override fun getPageTitle(position: Int): CharSequence? {
             return tabTitles.get(position)

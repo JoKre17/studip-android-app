@@ -12,7 +12,6 @@ import android.widget.Button
 import android.widget.TextView
 import de.kriegel.studip.R
 import de.kriegel.studip.client.content.model.data.Course
-import de.kriegel.studip.client.content.model.data.Id
 import de.kriegel.studip.main.MainActivity
 import kotlinx.android.synthetic.main.course_list_fragment.*
 import kotlinx.coroutines.*
@@ -48,7 +47,7 @@ class CourseListFragment() : Fragment() {
                     Timber.d("Got ${currentCourses.size} courses")
 
                     (activity as CoroutineScope).launch(Dispatchers.Main) {
-                        (recyclerView.adapter as RecyclerAdapter).update(currentCourses)
+                        (recyclerView.adapter as CourseListRecyclerAdapter).update(currentCourses)
                         loadingPanel.visibility = View.GONE
                     }
                 }
@@ -73,7 +72,7 @@ class CourseListFragment() : Fragment() {
         }
 
         val viewManager = LinearLayoutManager(context)
-        val viewAdapter = RecyclerAdapter(coursesImmutable, fragmentManager!!)
+        val viewAdapter = CourseListRecyclerAdapter(coursesImmutable, fragmentManager!!)
 
         recyclerView.apply {
             layoutManager = viewManager
@@ -85,10 +84,7 @@ class CourseListFragment() : Fragment() {
         super.onSaveInstanceState(outState)
 
         courses?.run {
-            var courseIds = ArrayList<Id>().toMutableList()
-            forEach { courseIds.add(it.id) }
-
-            outState.putSerializable("courseIds", courseIds as Serializable)
+            outState.putSerializable("courses", courses as Serializable)
         }
     }
 
@@ -103,11 +99,11 @@ class CourseListFragment() : Fragment() {
     private fun loadFromBundle(bundle: Bundle) {
         Timber.d("loadFromBundle")
 
-        (bundle.getSerializable("courseIds") as List<Id>)?.run {
+        (bundle.getSerializable("courses") as List<Course>)?.run {
             val coursesMutable = ArrayList<Course>().toMutableList()
             forEach {
                 Timber.i("Loading course $it")
-                coursesMutable.add(MainActivity.appConfiguration.client.courseService.getCourseById(it))
+                coursesMutable.add(it)
             }
             courses = coursesMutable.toList()
         }
@@ -116,7 +112,7 @@ class CourseListFragment() : Fragment() {
 
 }
 
-class RecyclerAdapter(var values: List<Course>, val fm : FragmentManager) : RecyclerView.Adapter<RecyclerAdapter.CourseListItemHolder>() {
+class CourseListRecyclerAdapter(var values: List<Course>, val fm : FragmentManager) : RecyclerView.Adapter<CourseListRecyclerAdapter.CourseListItemHolder>() {
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): CourseListItemHolder =
         CourseListItemHolder(LayoutInflater.from(p0.context).inflate(R.layout.course_list_item, p0, false), fm)
@@ -158,36 +154,43 @@ class RecyclerAdapter(var values: List<Course>, val fm : FragmentManager) : Recy
             courseTitleTextView.text = item.title
 
             detailsButton.setOnClickListener(View.OnClickListener {
-                Timber.i("${item.title} - ${it.id} clicked")
-
-
+                Timber.d("${item.title} - details clicked")
+                showCourseFragment(0)
             })
 
             forumButton.setOnClickListener(View.OnClickListener {
-                Timber.i("${item.title} - ${it.id} clicked")
+                Timber.d("${item.title} - forum clicked")
+                showCourseFragment(1)
             })
 
             participantsButton.setOnClickListener(View.OnClickListener {
-                Timber.i("${item.title} - ${it.id} clicked")
+                Timber.d("${item.title} - participants clicked")
+                showCourseFragment(2)
             })
 
             filesButton.setOnClickListener(View.OnClickListener {
-                Timber.i("${item.title} - ${it.id} clicked")
+                Timber.d("${item.title} - files clicked")
+                showCourseFragment(3)
             })
 
             announcementsButton.setOnClickListener(View.OnClickListener {
-                Timber.i("${item.title} - ${it.id} clicked")
+                Timber.d("${item.title} - announcements clicked")
+                showCourseFragment(4)
             })
 
+            // on default click on the list item, just open the details view
             view.setOnClickListener(View.OnClickListener {
-                Timber.i("${item.title} clicked")
-
-                val fragment = CourseFragment.newInstance(Bundle(), course)
-
-                val ft = fm.beginTransaction()
-                ft.replace(R.id.content_frame, fragment)
-                ft.commit()
+                Timber.d("${item.title} clicked")
+                showCourseFragment(0)
             })
+        }
+
+        fun showCourseFragment(i : Int) {
+            val fragment = CourseFragment.newInstance(Bundle(), course, initialShownTabIndex = i)
+
+            val ft = fm.beginTransaction()
+            ft.replace(R.id.content_frame, fragment)
+            ft.commit()
         }
 
     }
