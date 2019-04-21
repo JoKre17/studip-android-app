@@ -2,15 +2,24 @@ package de.kriegel.studip.config
 
 import android.content.Context
 import android.content.Intent
+import android.os.BaseBundle
+import android.os.Bundle
+import android.support.v4.app.BundleCompat
 import de.kriegel.studip.R
 import de.kriegel.studip.client.auth.Credentials
+import de.kriegel.studip.client.content.model.data.Course
+import de.kriegel.studip.client.content.model.file.FileRefNode
+import de.kriegel.studip.client.content.model.file.FileRefTree
 import de.kriegel.studip.client.service.StudIPClient
 import de.kriegel.studip.main.MainActivity
 import de.kriegel.studip.service.CourseNewsJobScheduler
+import org.json.JSONArray
+import org.json.JSONObject
 import timber.log.Timber
-import java.io.File
+import java.io.*
 import java.net.URI
 import java.nio.file.Path
+
 
 class AppConfiguration(val context: Context) {
 
@@ -64,7 +73,7 @@ class AppConfiguration(val context: Context) {
 
     fun getDefaultLogsLocation(): File? {
 
-        val absoluteLogsLocation = context.filesDir.absolutePath + File.separator + LOGS_DIR_NAME
+        val absoluteLogsLocation = context.getExternalFilesDir("").absolutePath + File.separator + LOGS_DIR_NAME
         val logsDir = File(absoluteLogsLocation)
         if (!logsDir.exists()) {
             val success = logsDir.mkdirs()
@@ -83,7 +92,7 @@ class AppConfiguration(val context: Context) {
 
     fun getDefaultDownloadLocation(): File? {
 
-        val absoluteLogsLocation = context.filesDir.absolutePath + File.separator + DOWNLOAD_DIR_NAME
+        val absoluteLogsLocation = context.getExternalFilesDir("").absolutePath + File.separator + DOWNLOAD_DIR_NAME
         val logsDir = File(absoluteLogsLocation)
         if (!logsDir.exists()) {
             val success = logsDir.mkdirs()
@@ -130,6 +139,7 @@ class AppConfiguration(val context: Context) {
     fun performLogin(serverUri: URI, serverCredentials: Credentials): Boolean {
         client = StudIPClient(serverUri, serverCredentials)
         client.courseService.downloadManager.downloadDirectory = getDefaultDownloadLocation()
+        Timber.i("downloadDirectory: ${client.courseService.downloadManager.downloadDirectory}")
 
         Timber.i("Authenticating...")
         var isAuthenticated = false

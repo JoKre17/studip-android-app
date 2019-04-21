@@ -17,6 +17,7 @@
     <string name="course_participants">Participants</string>
     <string name="course_files">Files</string>
     <string name="course_announcements">Announcements</string>
+    <string name="course_synched_file_ref_tree_prefix">COURSE_SYNCHED_FILE_REF_TREE_</string>
 
     // SETTINGS
     <string name="settings_notifications_course_announcements">Course announcements</string>

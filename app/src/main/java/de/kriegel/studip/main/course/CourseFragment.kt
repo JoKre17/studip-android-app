@@ -95,8 +95,6 @@ class CourseFragment() : Fragment() {
 
         init {
 
-            Timber.i("Initiating PagerAdapter")
-
             tabTitles = listOf(
                 res.getString(R.string.course_details),
                 res.getString(R.string.course_forum),
@@ -105,7 +103,7 @@ class CourseFragment() : Fragment() {
                 res.getString(R.string.course_announcements)
             )
 
-            Timber.i("tabTitles: ${tabTitles.toString()}")
+            Timber.d("tabTitles: ${tabTitles.toString()}")
         }
 
         override fun getCount(): Int = tabTitles.size

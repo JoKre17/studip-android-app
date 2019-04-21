@@ -7,4 +7,8 @@
         <item name="actionMenuTextColor">@android:color/white</item>
     </style>
 
+    <style name="AppTheme.SpinnerItemStyle" parent="AppTheme">
+        <item name="android:textColor">@color/baseGreyLighter10</item>
+    </style>
+
 </resources>

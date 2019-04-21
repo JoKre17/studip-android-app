@@ -19,7 +19,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                android:theme="@style/AppTheme.ToolBar"/>
+                android:theme="@style/AppTheme.ToolBar"
+        />
 
         <!-- The main content view where fragments are loaded -->
         <FrameLayout

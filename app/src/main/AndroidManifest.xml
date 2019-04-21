@@ -13,6 +13,7 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
+            android:launchMode="singleInstance"
             tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".start.StartActivity" android:label="StudIP"
                   android:theme="@style/AppTheme.NoTitleActivity"

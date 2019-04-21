@@ -61,7 +61,7 @@ class CourseDetailsFragment() : Fragment() {
                 "Semester",
                 MainActivity.appConfiguration.client.courseService.getSemesterById(course.startSemesterId).title
             ),
-            Pair("Participants", "15")
+            Pair("Participants", course.memberCounts.entries.sumBy { it.value })
         )
 
 
